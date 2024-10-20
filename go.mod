@@ -4,11 +4,18 @@ go 1.23.0
 
 require (
 	github.com/GolangLessons/protos v0.1.2
+	github.com/brianvoe/gofakeit v3.18.0+incompatible
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/ilyakaznacheev/cleanenv v1.5.0
+	github.com/mattn/go-sqlite3 v1.14.22
+	github.com/stretchr/testify v1.9.0
 	google.golang.org/grpc v1.67.1
 )
 
-require github.com/mattn/go-sqlite3 v1.14.22 // indirect
+require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+)
 
 require (
 	github.com/BurntSushi/toml v1.2.1 // indirect

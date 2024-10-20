@@ -2,11 +2,18 @@ package suite
 
 import (
 	"context"
+	"net"
 	"sso-service-grpc/internal/config"
+	"strconv"
 	"testing"
 
 	ssov1 "github.com/GolangLessons/protos/gen/go/sso"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+)
+
+const (
+	grpcHost = "0.0.0.0"
 )
 
 type Suite struct {
@@ -19,7 +26,7 @@ func New(t *testing.T) (context.Context, *Suite) {
 	t.Helper()
 	t.Parallel()
 
-	cfg := config.MustLoadByPath("../../configs/local_tests.yaml")
+	cfg := config.MustLoadByPath("../config/local.yaml")
 
 	ctx, cancelCtx := context.WithTimeout(context.Background(), cfg.GRPC.Timeout)
 
@@ -28,6 +35,20 @@ func New(t *testing.T) (context.Context, *Suite) {
 		cancelCtx()
 	})
 
-	cc, err := grpc.DialContext(context.Background()),
-	
+	cc, err := grpc.DialContext(context.Background(),
+		grpcAddres(cfg),
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		t.Fatalf("grpc server connection failed: %v", err)
+	}
+
+	return ctx, &Suite{
+		T:          t,
+		Cfg:        cfg,
+		AuthClient: ssov1.NewAuthClient(cc),
+	}
+}
+
+func grpcAddres(cfg *config.Config) string {
+	return net.JoinHostPort(grpcHost, strconv.Itoa(cfg.GRPC.Port))
 }
